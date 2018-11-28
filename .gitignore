@@ -45,4 +45,4 @@ phpunit.phar
 /backend/tests
 
 #docker
-/docker
+/storage
