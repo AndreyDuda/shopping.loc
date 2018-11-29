@@ -1,13 +1,15 @@
 version: '3'
 services:
   nginx:
-    build:
-      context: ./
-      dockerfile: docker/nginx.docker
+    image: nginx:1.10
+    container_name: shopping-nginx
+    links:
+      - php-fpm
     volumes:
       - ./:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       - php-fpm
 
@@ -15,6 +17,7 @@ services:
     build:
       context: ./
       dockerfile: docker/php-fpm.docker
+    container_name: shopping-php-fpm
     volumes:
       - ./:/var/www
     depends_on:
@@ -25,7 +28,7 @@ services:
     volumes:
       - ./storage/docker/mysql:/var/lib/mysql
     ports:
-      - "33061:3306"
+      - "3306:3306"
     environment:
       - "MYSQL_ROOT_PASSWORD=123"
       - "MYSQL_USER=docker"
