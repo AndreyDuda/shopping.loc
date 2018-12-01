@@ -30,6 +30,8 @@ return [
                 ],
             ],
         ],
+        'frontendUrlManager' => require __DIR__ . '/../../frontend/config/_urlManager.php',
+        'backendUrlManager'  => require __DIR__ . '/../../backend/config/_urlManager.php'
     ],
     'params' => $params,
 ];

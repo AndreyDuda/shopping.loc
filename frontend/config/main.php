@@ -14,15 +14,24 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'cookieValidationKey' => $params['cookieValidationKey']
         ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
-            'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
+            'identityCookie' => [
+                'name'     => '_identity',
+                'httpOnly' => true,
+                'domain'   => $params['cookieDomain']
+            ],
         ],
         'session' => [
-            // this is the name of the session cookie used for login on the frontend
-            'name' => 'advanced-frontend',
+            // this is the name of the session cookie used for login on the backend
+            'name' => '_session',
+            'cookieParams' => [
+                'domain' => $params['cookieDomain'],
+                'httpOnly' => true,
+            ]
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,
@@ -37,14 +46,11 @@ return [
             'errorAction' => 'site/error',
         ],
 
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
-                ''                  => 'site/index',
-                '<_a:login|logout>' => 'site/<_a>'
-            ],
-        ],
+        'frontendUrlManager' => require __DIR__ . '/_urlManager.php',
+        'backendUrlManager'  => require __DIR__ . '/../../backend/config/_urlManager.php',
+        'urlManager'         => function () {
+            return YII::$app->get('frontendUrlManager');
+        },
 
     ],
     'params' => $params,

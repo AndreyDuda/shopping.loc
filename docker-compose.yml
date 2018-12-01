@@ -38,7 +38,7 @@ services:
   mysql:
     image: mysql:5.7
     volumes:
-      - ./storage/docker/mysql:/var/lib/mysql
+      - ./docker/mysql:/var/lib/mysql
     ports:
       - "3306:3306"
     environment:
@@ -50,4 +50,4 @@ services:
   redis:
     image: redis:3.0
     ports:
-      - "63791:6379"
+      - "6379:6379"
