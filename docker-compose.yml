@@ -42,6 +42,9 @@ services:
       - ./docker/mysql:/var/lib/mysql
     ports:
       - "3306:3306"
+    networks:
+      app_net:
+        ipv4_address: 172.18.18.10
     environment:
       - "MYSQL_ROOT_PASSWORD=123"
       - "MYSQL_USER=docker"
@@ -52,3 +55,13 @@ services:
     image: redis:3.0
     ports:
       - "6379:6379"
+
+networks:
+  app_net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "false"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.18.0/24
