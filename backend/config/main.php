@@ -1,4 +1,21 @@
 <?php
+/*return [
+    'aliases' => [
+        '@bower' => '@vendor/bower-asset',
+        '@npm'   => '@vendor/npm-asset',
+    ],
+    'bootstrap'  => [
+        'common\bootstrap\SetUp',
+    ],
+    'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
+    'components' => [
+        'cache' => [
+            'class'     => 'yii\caching\MemCache',
+            'useMemcached' => true,
+        ],
+    ],
+];*/
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -9,9 +26,9 @@ $params = array_merge(
 return [
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
-    'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
     'modules' => [],
+    'controllerNamespace' => 'backend\controllers',
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
@@ -47,21 +64,11 @@ return [
             'errorAction' => 'site/error',
         ],
 
-        'frontendUrlManager' => require __DIR__ . '/../../frontend/config/_urlManager.php',
-        'backendUrlManager'  => require __DIR__ . '/_urlManager.php',
-        'urlManager'         => function () {
+        'backendUrlManager'   => require __DIR__ . '/_urlManager.php',
+        'frontendUrlManager'  => require __DIR__ . '/../../frontend/config/_urlManager.php',
+        'urlManager'          => function () {
             return YII::$app->get('backendUrlManager');
         },
-        'as access' => [
-            'class'  => 'yii\filters\AccessControl',
-            'except' => ['site/login', 'site/error'],
-            'rules'  => [
-                [
-                    'allow' => true,
-                    'roles' => ['@'],
-                ],
-            ],
-        ],
 
     ],
     'params' => $params,
