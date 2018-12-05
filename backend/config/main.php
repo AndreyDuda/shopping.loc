@@ -40,14 +40,14 @@ return [
             'identityCookie' => [
                 'name'     => '_identity',
                 'httpOnly' => true,
-                'domain'   => $params['cookieDomain']
+                'domain'   => '.backend.dok'
             ],
         ],
         'session' => [
             // this is the name of the session cookie used for login on the backend
             'name' => '_session',
             'cookieParams' => [
-                'domain' => $params['cookieDomain'],
+                'domain' => '.backend.dok',
                 'httpOnly' => true,
             ]
         ],
