@@ -56,6 +56,22 @@ class User extends ActiveRecord implements IdentityInterface
         ];
     }
 
+    public function createUser(string $username, string $email, string $password)
+    {
+        $this->username   = $username;
+        $this->email      = $email;
+        $this->created_at = time();
+        $this->status     = self::STATUS_ACTIVE;
+
+        $this->setPassword($password);
+        $this->generateAuthKey();
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
+    }
+
     /**
      * {@inheritdoc}
      */
