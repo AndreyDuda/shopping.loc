@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use services\auth\PasswordResetService;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -179,9 +180,9 @@ class SiteController extends Controller
                 Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
 
                 return $this->goHome();
-            } else {
-                Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
             }
+            Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
+
         }
 
         return $this->render('requestPasswordResetToken', [
@@ -198,20 +199,27 @@ class SiteController extends Controller
      */
     public function actionResetPassword($token)
     {
+        $service = new PasswordResetService();
+
         try {
-            $model = new ResetPasswordForm($token);
-        } catch (InvalidParamException $e) {
+            $service->validateToken($token);
+        } catch (\DomainException $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            Yii::$app->session->setFlash('success', 'New password saved.');
-
+        $form = new ResetPasswordForm();
+        if ($form->load(\Yii::$app->request->post()) && $form->validate()) {
+            try {
+                \Yii::$app->session->setFlash('success', 'New password saved');
+            } catch (\DomainException $e) {
+                \Yii::$app->errorHandler->logException($e);
+                \Yii::$app->session('error', $e->getMessage());
+            }
             return $this->goHome();
         }
 
         return $this->render('resetPassword', [
-            'model' => $model,
+            'madel' => $form
         ]);
     }
 }
