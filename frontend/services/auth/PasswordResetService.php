@@ -15,6 +15,17 @@ use frontend\models\ResetPasswordForm;
 
 class PasswordResetService
 {
+    private $supportEmail;
+
+    public function __construct($supportEmail)
+    {
+        $this->supportEmail = $supportEmail;
+    }
+
+    /**
+     * @param PasswordResetRequestForm $form
+     * @throws \yii\base\Exception
+     */
     public function request(PasswordResetRequestForm $form): void
     {
 
@@ -40,7 +51,7 @@ class PasswordResetService
                 ['html' => 'passwordResetToken-html', 'text' => 'passwordResetToken-text'],
                 ['user' => $user]
             )
-            ->setFrom([\Yii::$app->params['supportEmail'] => \Yii::$app->name . ' robot'])
+            ->setFrom($this->su)
             ->setTo($user->email)
             ->setSubject('Password reset for ' . \Yii::$app->name)
             ->send();

@@ -14,14 +14,23 @@ use frontend\forms\SignupForm;
 class SignupService
 {
 
+    /**
+     * @param SignupForm $form
+     * @return User
+     */
     public function signup(SignupForm $form): User
     {
-        $user = new user();
+       /* $user = new user();
         $user->createUser(
             $form->username,
             $form->email,
             $form->password
-        );
+        );*/
+       $user = User::signup(
+           $form->username,
+           $form->email,
+           $form->password
+       );
 
         if (!$user->save()) {
             throw new \RuntimeException('Saving error ...');

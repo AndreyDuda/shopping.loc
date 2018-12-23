@@ -24,7 +24,55 @@ use yii\web\IdentityInterface;
 class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
-    const STATUS_ACTIVE = 10;
+    const STATUS_ACTIVE  = 10;
+
+    /**
+     * @param string $username
+     * @param string $email
+     * @param string $password
+     * @return User
+     */
+    public static function signup(string $username, string $email, string $password) : User
+    {
+        $user             = new User();
+        $user->username   = $username;
+        $user->email      = $email;
+        $user->created_at = time();
+        $user->status     = self::STATUS_ACTIVE;
+        $user->setPassword($password);
+        $user->generateAuthKey();
+        return $user;
+    }
+
+    /**
+     * @throws \yii\base\Exception
+     */
+    public function requestPasswordResset() : void
+    {
+        if (!empty($this->passord_reset_token) && self::isPasswordResetTokenValid($this->password_reset_token)) {
+            throw new \DomainException('Password reset is already requested.');
+        }
+        $this->password_reset_token = Yii::$app->security->generateRandomString() . '_' . time();
+    }
+
+    /**
+     * @param $password
+     */
+    public function resetPassword($password) : void
+    {
+        if (empty($this->password_reset_token)) {
+            throw new \DomainException('password resetting is not requested.');
+        }
+        $this->$this->setPassword($password);
+        $this->password_reset_token = null;
+
+    }
+
+    private function setPassword($password)
+    {
+        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
+
+    }
 
 
     /**
@@ -169,15 +217,6 @@ class User extends ActiveRecord implements IdentityInterface
         return Yii::$app->security->validatePassword($password, $this->password_hash);
     }
 
-    /**
-     * Generates password hash from password and sets it to the model
-     *
-     * @param string $password
-     */
-    public function setPassword($password)
-    {
-        $this->password_hash = Yii::$app->security->generatePasswordHash($password);
-    }
 
     /**
      * Generates "remember me" authentication key

@@ -26,9 +26,12 @@ $params = array_merge(
 return [
     'id' => 'app-backend',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
-    'modules' => [],
     'controllerNamespace' => 'backend\controllers',
+    'bootstrap' => [
+        'log',
+        'common\bootstrap\SetUp'
+    ],
+    'modules' => [],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-backend',
